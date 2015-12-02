@@ -12,5 +12,5 @@ public class PongMessage implements Serializable {
 	public String toString() {
 		return "Pong !";
 	}
-
+	//test
 }
