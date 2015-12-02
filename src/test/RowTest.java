@@ -10,5 +10,4 @@ public class RowTest {
 	public void test() {
 		fail("Not yet implemented");
 	}
-
 }
