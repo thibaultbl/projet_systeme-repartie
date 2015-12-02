@@ -4,6 +4,7 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 
+
 public class PingActor extends UntypedActor {
 
 	final ActorRef pongActor = getContext().actorOf(Props.create(PongActor.class),
@@ -22,7 +23,7 @@ public class PingActor extends UntypedActor {
 					+ "\") message!");
 		} else if (message instanceof Stop) {
 			getContext().system().shutdown();
-			System.out.println("PingActor: Actor System terminated!"); 
+			System.out.println("PingActor: Actor System terminated!"); //
 		}
 	}
 }
