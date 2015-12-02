@@ -1,5 +1,7 @@
 package pingpong;
 
+import akka.actor.UntypedActor;
+
 
 public class PongActor extends UntypedActor {
 
