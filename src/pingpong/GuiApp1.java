@@ -65,6 +65,7 @@ public class GuiApp1 {
       
       //make sure the JFrame is visible
       guiFrame.setVisible(true);
+      //test
   }
   
 }
