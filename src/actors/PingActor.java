@@ -1,5 +1,9 @@
-package pingpong;
+package actors;
 
+import pingpong.PingMessage;
+import pingpong.PongMessage;
+import pingpong.Start;
+import pingpong.Stop;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;

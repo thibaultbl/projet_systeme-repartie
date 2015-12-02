@@ -1,5 +1,7 @@
-package pingpong;
+package actors;
 
+import pingpong.PingMessage;
+import pingpong.PongMessage;
 import akka.actor.UntypedActor;
 
 public class PongActor extends UntypedActor {
