@@ -1,5 +1,7 @@
 package projet;
 
-public class FingerTable {
+import java.util.TreeMap;
+
+public class FingerTable extends TreeMap {
 	
 }
