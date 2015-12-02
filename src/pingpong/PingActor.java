@@ -23,7 +23,7 @@ public class PingActor extends UntypedActor {
 					+ "\") message!");
 		} else if (message instanceof Stop) {
 			getContext().system().shutdown();
-			System.out.println("PingActor: Actor System terminated!"); //
+			System.out.println("PingActor: Actor System terminated!"); //test
 		}
 	}
 }
