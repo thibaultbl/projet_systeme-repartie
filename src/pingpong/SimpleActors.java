@@ -1,9 +1,5 @@
 package pingpong;
 
-import actors.PingActor;
-import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
-import akka.actor.Props;
 
 public class SimpleActors {
 
