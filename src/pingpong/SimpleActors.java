@@ -13,6 +13,6 @@ public class SimpleActors {
 		final ActorRef pingActor = system.actorOf(Props.create(PingActor.class),
 				"pinger");
 		GuiApp1 gui = new GuiApp1(pingActor);
-//		pingActor.tell(new Start(), pingActor);
+//		pingActor.tell(new Start(), pingActor); aaa
 	}
 }
