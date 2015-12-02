@@ -3,7 +3,7 @@ package projet;
 import akka.actor.UntypedActor;
 
 public class ChordActor extends UntypedActor{
-
+	int key;
 	
 	public ChordActor() {
 		super();
@@ -12,7 +12,16 @@ public class ChordActor extends UntypedActor{
 
 	@Override
 	public void onReceive(Object arg0) throws Exception {
-		
 	}
+
+	public int getKey() {
+		return key;
+	}
+
+	public void setKey(int key) {
+		this.key = key;
+	}
+	
+	
 
 }

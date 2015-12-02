@@ -15,12 +15,12 @@ public class main {
 		final ActorRef actor = system.actorOf(Props.create(PingActor.class),"test");
 		Row r=new Row(actor, 1,	1);
 		FingerTable tree=new FingerTable();
-		tree.put(1, r);
-		tree.put(2, r);
-		tree.put(3, r);
+		tree.getTree().put(1, r);
+		tree.getTree().put(2, r);
+		tree.getTree().put(3, r);
 		
 
-		System.out.println(tree.get(2));
+		System.out.println(tree.getTree().get(2));
 
 	}
 
