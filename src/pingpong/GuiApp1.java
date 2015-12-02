@@ -20,7 +20,7 @@ public class GuiApp1 {
   
   //Note: Typically the main method will be in a
   //separate class. As this is a simple one class
-  //example it's all in the one class.
+  //example it's all in the one class. blablabla
   public static void main(String[] args) {
       
       new GuiApp1(null);
