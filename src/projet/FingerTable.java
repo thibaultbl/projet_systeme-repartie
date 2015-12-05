@@ -20,6 +20,4 @@ public class FingerTable  {
 	public void setTree(TreeMap tree) {
 		this.tree = tree;
 	}
-	
-	
 }

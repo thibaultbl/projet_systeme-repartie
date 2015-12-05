@@ -21,7 +21,5 @@ public class ChordActor extends UntypedActor{
 	public void setKey(int key) {
 		this.key = key;
 	}
-	
-	
 
 }
