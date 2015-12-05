@@ -4,7 +4,7 @@ import scala.collection.mutable.HashTable;
 import akka.actor.ActorRef;
 
 public class ChordNode {
-	private HashTable finger;
+	private FingerTable finger;
 	private ActorRef actor;
 	
 	public ActorRef getRef(){
