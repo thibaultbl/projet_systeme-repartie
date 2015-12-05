@@ -8,9 +8,15 @@ public class FingerTable  {
 	
 	TreeMap tree;
 	
-	public void tableEntry(ActorRef successor, int idNoeud,	int ordreLigne){
-		Row r=new Row(successor,  idNoeud,	 ordreLigne);
-		tree.put(1, r);
+	public FingerTable(int key){
+		for(int i=0;i<3;i++){
+			this.tableEntry(key, i);
+		}
+	}
+	
+	public void tableEntry(int idNoeud,	int ordreLigne){
+		Row r=new Row(idNoeud,	 ordreLigne);
+		tree.put(ordreLigne, r);
 	}
 
 	public TreeMap getTree() {
@@ -21,5 +27,9 @@ public class FingerTable  {
 		this.tree = tree;
 	}
 	
-	
+	public void afficher(){
+		for(int i=0;i<3;i++){
+			tree.get(i).toString();
+		}
+	}
 }

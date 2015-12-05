@@ -14,12 +14,21 @@ public class Row  {
 		highBound=((idNoeud+(int)java.lang.Math.pow(2, ordreLigne)) % (int)java.lang.Math.pow(2, 8));
 	}
 	
-	public Row(ActorRef successor, int idNoeud,	int ordreLigne) {
+	public Row(int idNoeud,	int ordreLigne) {
 		super();
 		this.successor = successor;
 		this.idNoeud = idNoeud;
 		this.ordreLigne = ordreLigne;
 		this.calculInterval();
+		this.determineSuccessor();
+	}
+	
+	//function to determine the successor of the interval
+	public ActorRef determineSuccessor(){
+		/*
+		 * To Do
+		 */
+		return null;
 	}
 
 	public int getLowBound() {
@@ -60,6 +69,14 @@ public class Row  {
 
 	public void setOrdreLigne(int ordreLigne) {
 		this.ordreLigne = ordreLigne;
+	}
+	
+	public int getStart(){
+		return lowBound;
+	}
+	
+	public String toString(){
+		return "lowBound :"+lowBound+" highBound : "+highBound+" idNoeud : "+idNoeud+" ordreLigne : "+ordreLigne;
 	}
 	
 }

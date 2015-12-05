@@ -12,8 +12,8 @@ public class main {
 	 */
 	public static void main(String[] args) {
 		final ActorSystem system = ActorSystem.create("globalSystem");
-		final ActorRef actor = system.actorOf(Props.create(PingActor.class),"test");
-		Row r=new Row(actor, 1,	1);
+		final ActorRef actor = system.actorOf(Props.create(ChordActor.class),"ChordActor");
+		Row r=new Row(1,	1);
 		FingerTable tree=new FingerTable();
 		tree.getTree().put(1, r);
 		tree.getTree().put(2, r);

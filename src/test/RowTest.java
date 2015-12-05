@@ -16,7 +16,7 @@ public class RowTest {
 	public void calculIntervalTest() {
 		final ActorSystem system = ActorSystem.create("globalSystem");
 		final ActorRef actor = system.actorOf(Props.create(PingActor.class),"test");
-		Row r=new Row(actor, 1,	1);
+		Row r=new Row(1,	1);
 		assertEquals(2,r.getLowBound() );
 		assertEquals(3,r.getHighBound() );
 	}
