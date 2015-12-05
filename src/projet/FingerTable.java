@@ -26,10 +26,12 @@ public class FingerTable  {
 	public void setTree(TreeMap tree) {
 		this.tree = tree;
 	}
+
 	
 	public void afficher(){
 		for(int i=0;i<3;i++){
 			tree.get(i).toString();
 		}
 	}
+
 }
