@@ -16,11 +16,10 @@ public class Row  {
 	
 	public Row(int idNoeud,	int ordreLigne) {
 		super();
-		this.successor = successor;
 		this.idNoeud = idNoeud;
 		this.ordreLigne = ordreLigne;
 		this.calculInterval();
-		this.determineSuccessor();
+		successor=this.determineSuccessor();
 	}
 	
 	//function to determine the successor of the interval

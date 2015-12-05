@@ -23,6 +23,9 @@ public class ChordActor extends UntypedActor{
 		else if(message instanceof TrouveMessage) {
 			
 		}
+		else if(message instanceof TestFingerTable) {
+			table.afficher();
+		}
 		else{
 			unhandled(message);
 		}

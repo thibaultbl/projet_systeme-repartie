@@ -5,10 +5,10 @@ import java.util.TreeMap;
 import akka.actor.ActorRef;
 
 public class FingerTable  {
-	
 	TreeMap tree;
 	
 	public FingerTable(int key){
+		tree=new TreeMap();
 		for(int i=0;i<3;i++){
 			this.tableEntry(key, i);
 		}
@@ -30,8 +30,9 @@ public class FingerTable  {
 	
 	public void afficher(){
 		for(int i=0;i<3;i++){
-			tree.get(i).toString();
+			System.out.println(tree.get(i).toString());
 		}
 	}
 
+	
 }
