@@ -10,8 +10,8 @@ public class Row  {
 	private int ordreLigne;
 	
 	public void calculInterval(){
-		lowBound=((idNoeud+(int)java.lang.Math.pow(2, ordreLigne-1)) % ((int)java.lang.Math.pow(2, Hashtable.nbNodes)) ) ;
-		highBound=((idNoeud+(int)java.lang.Math.pow(2, ordreLigne)) % (int)java.lang.Math.pow(2, Hashtable.nbNodes));
+		lowBound=((((idNoeud+(int)java.lang.Math.pow(2, (ordreLigne+1)-1)) % ((int)java.lang.Math.pow(2, Hashtable.nbNodes)) )) % 8) ;
+		highBound=((((idNoeud+(int)java.lang.Math.pow(2, (ordreLigne+1))) % (int)java.lang.Math.pow(2, Hashtable.nbNodes))) % 8);
 	}
 	
 	public Row(int idNoeud,	int ordreLigne) {

@@ -26,6 +26,11 @@ public class ChordActor extends UntypedActor{
 		else if(message instanceof TestFingerTable) {
 			table.afficher();
 		}
+		else if(message instanceof SetKeyMessage) {
+			final SetKeyMessage setKey = (SetKeyMessage) message;
+			this.key=setKey.getKey();
+			table=new FingerTable(key);
+		}
 		else{
 			unhandled(message);
 		}

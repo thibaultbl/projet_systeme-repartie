@@ -12,9 +12,15 @@ public class main {
 	 */
 	public static void main(String[] args) {
 		final ActorSystem system = ActorSystem.create("globalSystem");
-		final ActorRef actor = system.actorOf(Props.create(ChordActor.class),"ChordActor");
+		final ActorRef actor1 = system.actorOf(Props.create(ChordActor.class),"ChordActor1");
+		final ActorRef actor2 = system.actorOf(Props.create(ChordActor.class),"ChordActor2");
+		SetKeyMessage setKey=new SetKeyMessage(1);
 		TestFingerTable test=new TestFingerTable();
-		actor.tell(test, null);
+		actor1.tell(test, null);
+		actor1.tell(setKey, null);
+		actor1.tell(test, null);
+		
+		
 
 	}
 
