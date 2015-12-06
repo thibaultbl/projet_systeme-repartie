@@ -17,11 +17,21 @@ public class ChordActor extends UntypedActor{
 	public void onReceive(Object message) throws Exception {
 		//if Research message received
 		if (message instanceof RechercheMessage) {
-			
+			System.out.println("recherche message reçu");
+			final RechercheMessage rechercheMessage = (RechercheMessage) message;
+			if(rechercheMessage.getCleRecherche()==this.key){
+				System.out.println("clé trouvée => envoi trouveMessage");
+				this.getSender().tell(new TrouveMessage(),this.self());
+			}
+			else{
+				
+			}
 		}
 		//If the present ChordActor sent a request and the successive message cascade found the key's responsable
 		else if(message instanceof TrouveMessage) {
-			
+			final TrouveMessage trouveMessage = (TrouveMessage) message;
+			System.out.println("reçu trouvé message ");
+			this.getSender().tell(new TestFingerTable(), this.self());
 		}
 		else if(message instanceof TestFingerTable) {
 			table.afficher();
