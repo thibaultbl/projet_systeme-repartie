@@ -1,5 +1,8 @@
 package projet;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import pingpong.PingActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
@@ -30,19 +33,37 @@ public class main {
 		final ActorRef actor0 = system.actorOf(Props.create(ChordActor.class),"ChordActor0");
 		final ActorRef actor1 = system.actorOf(Props.create(ChordActor.class),"ChordActor1");
 		final ActorRef actor3 = system.actorOf(Props.create(ChordActor.class),"ChordActor3");
-		SetKeyMessage setKey6=new SetKeyMessage(6);
+		SetKeyMessage setKey0=new SetKeyMessage(0);
 		SetKeyMessage setKey1=new SetKeyMessage(1);
-		SetKeyMessage setKey2=new SetKeyMessage(2);
-		actor0.tell(setKey6, null);
+		SetKeyMessage setKey3=new SetKeyMessage(3);
+		actor0.tell(setKey0, null);
 		actor1.tell(setKey1, null);
-		actor3.tell(setKey2, null);
+		actor3.tell(setKey3, null);
 		
 		RechercheMessage recherche=new RechercheMessage(1);
 		actor1.tell(recherche, actor0);
 		
 		/**
-		 * Test de recherche en rentrant la clé recherché à la main
+		 * On ajoute l'ensemble des clés au successeur correspondant
 		 */
+		//Pour l'acteur 3
+		List<Integer> liste=new ArrayList<Integer>();
+		liste.add(2);
+		AddOthersKeysMessage addOthers=new AddOthersKeysMessage(liste);
+		actor3.tell(addOthers, null);
+		AfficherCleMessage afficher=new AfficherCleMessage();
+		actor3.tell(afficher, null);
+		
+		//pour l'acteur 0
+		List<Integer> liste2=new ArrayList<Integer>();
+		for(int i=4;i<8;i++){
+			liste2.add(i);
+		}
+		AddOthersKeysMessage addOthers2=new AddOthersKeysMessage(liste2);
+		actor0.tell(addOthers2, null);;
+		actor0.tell(afficher, null);
+		
+		
 		
 	}
 

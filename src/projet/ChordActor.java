@@ -1,10 +1,13 @@
 package projet;
 
-import pingpong.PingMessage;
+import java.util.ArrayList;
+import java.util.List;
+
 import akka.actor.UntypedActor;
 
 public class ChordActor extends UntypedActor{
 	int key;
+	List<Integer> othersKeys=new ArrayList<Integer>();
 	FingerTable table;
 	
 	public ChordActor() {
@@ -17,21 +20,23 @@ public class ChordActor extends UntypedActor{
 	public void onReceive(Object message) throws Exception {
 		//if Research message received
 		if (message instanceof RechercheMessage) {
-			System.out.println("recherche message reçu");
 			final RechercheMessage rechercheMessage = (RechercheMessage) message;
 			if(rechercheMessage.getCleRecherche()==this.key){
-				System.out.println("clé trouvée => envoi trouveMessage");
 				this.getSender().tell(new TrouveMessage(),this.self());
 			}
 			else{
-				
+				/**  
+				 * TO DO
+				 */
 			}
 		}
 		//If the present ChordActor sent a request and the successive message cascade found the key's responsable
 		else if(message instanceof TrouveMessage) {
 			final TrouveMessage trouveMessage = (TrouveMessage) message;
-			System.out.println("reçu trouvé message ");
-			this.getSender().tell(new TestFingerTable(), this.self());
+			/**
+			 * To Modify => TestFingerTable is useless in this context
+			 */
+			//this.getSender().tell(new TestFingerTable(), this.self());
 		}
 		else if(message instanceof TestFingerTable) {
 			table.afficher();
@@ -40,6 +45,14 @@ public class ChordActor extends UntypedActor{
 			final SetKeyMessage setKey = (SetKeyMessage) message;
 			this.key=setKey.getKey();
 			table=new FingerTable(key);
+		}
+		else if(message instanceof AddOthersKeysMessage) {
+			final AddOthersKeysMessage addOthersKeys = (AddOthersKeysMessage) message;
+			this.addOthersKeys(addOthersKeys.getoKeys());
+			table=new FingerTable(key);
+		}
+		else if(message instanceof AfficherCleMessage) {
+			this.afficherKeys();
 		}
 		else{
 			unhandled(message);
@@ -52,6 +65,19 @@ public class ChordActor extends UntypedActor{
 
 	public void setKey(int key) {
 		this.key = key;
+	}
+	
+	public void addOthersKeys(List<Integer> oKeys) {
+		for(int i=0; i<oKeys.size();i++){
+			othersKeys.add(oKeys.get(i));
+		}
+	}
+	
+	public void afficherKeys(){
+		System.out.println("key propre :"+key);
+		for(int i=0; i<othersKeys.size();i++){
+			System.out.println(othersKeys.get(i));
+		}
 	}
 
 }
