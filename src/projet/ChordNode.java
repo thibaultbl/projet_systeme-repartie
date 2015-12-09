@@ -1,10 +1,10 @@
 package projet;
 
-import scala.collection.mutable.HashTable;
 import akka.actor.ActorRef;
 
 public class ChordNode {
 	private ActorRef actor;
+	int key;
 	
 	public ActorRef getRef(){
 		return actor;

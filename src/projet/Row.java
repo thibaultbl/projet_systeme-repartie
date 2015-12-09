@@ -24,9 +24,7 @@ public class Row  {
 	
 	//function to determine the successor of the interval
 	public ActorRef determineSuccessor(){
-		/*
-		 * To Do
-		 */
+		//TODO
 		return null;
 	}
 
