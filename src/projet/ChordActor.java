@@ -7,13 +7,12 @@ import akka.actor.UntypedActor;
 
 public class ChordActor extends UntypedActor{
 	Key key;
-	List<Integer> othersKeys=new ArrayList<Integer>();
+	List<Key> othersKeys=new ArrayList<Key>();
 	FingerTable table;
 	
 	public ChordActor() {
 		super();
 		table=new FingerTable(key);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -25,9 +24,7 @@ public class ChordActor extends UntypedActor{
 				this.getSender().tell(new TrouveMessage(),this.self());
 			}
 			else{
-				/**  
-				 * TO DO
-				 */
+				//TODO
 			}
 		}
 		//If the present ChordActor sent a request and the successive message cascade found the key's responsable
@@ -67,7 +64,7 @@ public class ChordActor extends UntypedActor{
 		this.key = key;
 	}
 	
-	public void addOthersKeys(List<Integer> oKeys) {
+	public void addOthersKeys(List<Key> oKeys) {
 		for(int i=0; i<oKeys.size();i++){
 			othersKeys.add(oKeys.get(i));
 		}

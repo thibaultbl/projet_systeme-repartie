@@ -2,8 +2,6 @@ package projet;
 
 import java.util.TreeMap;
 
-import akka.actor.ActorRef;
-
 public class FingerTable  {
 	TreeMap tree;
 	

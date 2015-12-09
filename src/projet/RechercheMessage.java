@@ -1,8 +1,7 @@
 package projet;
 
-import java.io.Serializable;
 
-public class RechercheMessage implements Serializable {
+public class RechercheMessage {
 	int cleRecherche;
 
 	public RechercheMessage(int cleRecherche) {

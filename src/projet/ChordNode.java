@@ -4,7 +4,11 @@ import akka.actor.ActorRef;
 
 public class ChordNode implements KeyRoutable{
 	private ActorRef actor;
-	Key key;
+	private Key key;
+	
+	public ChordNode(){
+		
+	}
 	
 	public ActorRef getRef(){
 		return actor;
@@ -15,13 +19,13 @@ public class ChordNode implements KeyRoutable{
 		this.actor=actor;
 	}
 	
-	
-	//trouver le successeur d'une valeur k
-	public void findSuccessor(int k){
-		//Hashtable.nbNodes;
-	}
-	
 	public Key getKey(){
 		return this.key;
 	}
+
+	public void setKey(Key key) {
+		this.key = key;
+	}
+	
+	
 }

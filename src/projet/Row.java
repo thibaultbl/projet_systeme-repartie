@@ -1,5 +1,7 @@
 package projet;
 
+import java.util.ArrayList;
+
 import akka.actor.ActorRef;
 
 public class Row  {
@@ -19,12 +21,29 @@ public class Row  {
 		this.idNoeud = idNoeud;
 		this.ordreLigne = ordreLigne;
 		this.calculInterval();
-		successor=this.determineSuccessor();
+		this.successor=this.determineSuccessor();
 	}
 	
 	//function to determine the successor of the interval
 	public ActorRef determineSuccessor(){
 		//TODO
+		
+		
+		
+		
+		
+		
+		
+		/*boolean trouve=false;
+		ActorRef resultat;
+		int index=this.lowBound;
+		//on parcourt les clés dans l'ordre à partir de l'idnoeud de la row jusqu'à trouver une clé
+		while(trouve==false){
+			//si on trouve une clé, trouve=true
+			
+			
+		}
+		//retourner l'actorref*/
 		return null;
 	}
 

@@ -5,18 +5,18 @@ import java.util.List;
 
 public class AddOthersKeysMessage {
 
-	List<Integer> oKeys=new ArrayList<Integer>();
+	List<Key> oKeys=new ArrayList<Key>();
 
-	public AddOthersKeysMessage(List<Integer> oKeys) {
+	public AddOthersKeysMessage(List<Key> oKeys) {
 		super();
 		this.oKeys = oKeys;
 	}
 
-	public List<Integer> getoKeys() {
+	public List<Key> getoKeys() {
 		return oKeys;
 	}
 
-	public void setoKeys(List<Integer> oKeys) {
+	public void setoKeys(List<Key> oKeys) {
 		this.oKeys = oKeys;
 	}
 	

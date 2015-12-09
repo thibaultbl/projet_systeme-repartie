@@ -1,13 +1,15 @@
 package projet;
 
 public class TrouveMessage {
-	String test;
+	String message;
 
 	public TrouveMessage() {
 		super();
-		this.test = "Clé trouvée";
+		this.message = "Clé trouvée";
 	}
 	
-	
+	public String getMessage(){
+		return this.message;
+	}
 
 }

@@ -3,7 +3,6 @@ package projet;
 import java.util.ArrayList;
 import java.util.List;
 
-import pingpong.PingActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
@@ -50,17 +49,19 @@ public class main {
 		 * On ajoute l'ensemble des clés au successeur correspondant
 		 */
 		//Pour l'acteur 3
-		List<Integer> liste=new ArrayList<Integer>();
-		liste.add(2);
+		List<Key> liste=new ArrayList<Key>();
+		Key key2 = new Key(2);
+		liste.add(key2);
 		AddOthersKeysMessage addOthers=new AddOthersKeysMessage(liste);
 		actor3.tell(addOthers, null);
 		AfficherCleMessage afficher=new AfficherCleMessage();
 		actor3.tell(afficher, null);
 		
 		//pour l'acteur 0
-		List<Integer> liste2=new ArrayList<Integer>();
+		List<Key> liste2=new ArrayList<Key>();
 		for(int i=4;i<8;i++){
-			liste2.add(i);
+			Key key= new Key(i);
+			liste2.add(key);
 		}
 		AddOthersKeysMessage addOthers2=new AddOthersKeysMessage(liste2);
 		actor0.tell(addOthers2, null);;
