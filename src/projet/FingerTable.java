@@ -7,10 +7,10 @@ import akka.actor.ActorRef;
 public class FingerTable  {
 	TreeMap tree;
 	
-	public FingerTable(int key){
+	public FingerTable(Key key){
 		tree=new TreeMap();
 		for(int i=0;i<3;i++){
-			this.tableEntry(key, i);
+			this.tableEntry(key.getValue(), i);
 		}
 	}
 	

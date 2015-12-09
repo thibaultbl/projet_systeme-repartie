@@ -1,18 +1,18 @@
 package projet;
 
 public class SetKeyMessage {
-	private int key;
+	private Key key;
 
-	public SetKeyMessage(int key) {
+	public SetKeyMessage(Key key) {
 		super();
 		this.key = key;
 	}
 
-	public int getKey() {
+	public Key getKey() {
 		return key;
 	}
 
-	public void setKey(int key) {
+	public void setKey(Key key) {
 		this.key = key;
 	}
 	

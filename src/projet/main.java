@@ -33,9 +33,12 @@ public class main {
 		final ActorRef actor0 = system.actorOf(Props.create(ChordActor.class),"ChordActor0");
 		final ActorRef actor1 = system.actorOf(Props.create(ChordActor.class),"ChordActor1");
 		final ActorRef actor3 = system.actorOf(Props.create(ChordActor.class),"ChordActor3");
-		SetKeyMessage setKey0=new SetKeyMessage(0);
-		SetKeyMessage setKey1=new SetKeyMessage(1);
-		SetKeyMessage setKey3=new SetKeyMessage(3);
+		Key key0 = new Key(0);
+		Key key1 = new Key(1);
+		Key key3 = new Key(3);
+		SetKeyMessage setKey0=new SetKeyMessage(key0);
+		SetKeyMessage setKey1=new SetKeyMessage(key1);
+		SetKeyMessage setKey3=new SetKeyMessage(key3);
 		actor0.tell(setKey0, null);
 		actor1.tell(setKey1, null);
 		actor3.tell(setKey3, null);

@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import projet.ChordActor;
 import projet.FingerTable;
+import projet.Key;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
@@ -15,7 +16,8 @@ public class FingerTableTest {
 
 	@Test
 	public void tableEntryTest() {
-		FingerTable finger=new FingerTable(1);
+		Key key1 = new Key(1);
+		FingerTable finger=new FingerTable(key1);
 		finger.tableEntry(1, 1);
 		finger.tableEntry(1, 2);
 		assertEquals("lowBound :2 highBound : 3 idNoeud : 1 ordreLigne : 1",finger.getTree().get(1).toString() );

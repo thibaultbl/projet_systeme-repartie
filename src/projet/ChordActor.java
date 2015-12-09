@@ -6,7 +6,7 @@ import java.util.List;
 import akka.actor.UntypedActor;
 
 public class ChordActor extends UntypedActor{
-	int key;
+	Key key;
 	List<Integer> othersKeys=new ArrayList<Integer>();
 	FingerTable table;
 	
@@ -21,7 +21,7 @@ public class ChordActor extends UntypedActor{
 		//if Research message received
 		if (message instanceof RechercheMessage) {
 			final RechercheMessage rechercheMessage = (RechercheMessage) message;
-			if(rechercheMessage.getCleRecherche()==this.key){
+			if(rechercheMessage.getCleRecherche()==this.key.getValue()){
 				this.getSender().tell(new TrouveMessage(),this.self());
 			}
 			else{
@@ -59,11 +59,11 @@ public class ChordActor extends UntypedActor{
 		}
 	}
 
-	public int getKey() {
+	public Key getKey() {
 		return key;
 	}
 
-	public void setKey(int key) {
+	public void setKey(Key key) {
 		this.key = key;
 	}
 	
@@ -79,5 +79,17 @@ public class ChordActor extends UntypedActor{
 			System.out.println(othersKeys.get(i));
 		}
 	}
-
+	
+	/*public void join(ChordNode c){
+		// ChordMessage comsg = new ChordMessage(...);
+		// get.Ref().tell(comsg);
+	}*/
+	
+	/*private handle:JoinMsg(ChordMessage msg){
+		ChordNode sender = msg.getSender();
+		Row ligne=this.ft.lookup(sender.getKey());if(ligne==this.ft.first(j){
+		}
+		else{
+		ligne.getReferent(').getref().forward(msg);
+*/
 }
