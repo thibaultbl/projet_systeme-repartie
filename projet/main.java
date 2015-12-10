@@ -35,12 +35,13 @@ public class main {
 		Key key0 = new Key(0);
 		Key key1 = new Key(1);
 		Key key3 = new Key(3);
-		SetKeyMessage setKey0=new SetKeyMessage(key0);
-		SetKeyMessage setKey1=new SetKeyMessage(key1);
-		SetKeyMessage setKey3=new SetKeyMessage(key3);
+		CreateFingerTableMessage setKey0=new CreateFingerTableMessage(key0);
+		CreateFingerTableMessage setKey1=new CreateFingerTableMessage(key1);
+		CreateFingerTableMessage setKey3=new CreateFingerTableMessage(key3);
 		actor0.tell(setKey0, null);
 		actor1.tell(setKey1, null);
 		actor3.tell(setKey3, null);
+		
 		
 		RechercheMessage recherche=new RechercheMessage(1);
 		actor1.tell(recherche, actor0);
@@ -64,7 +65,7 @@ public class main {
 			liste2.add(key);
 		}
 		AddOthersKeysMessage addOthers2=new AddOthersKeysMessage(liste2);
-		actor0.tell(addOthers2, null);;
+		actor0.tell(addOthers2, null);
 		actor0.tell(afficher, null);
 		
 		

@@ -12,9 +12,11 @@ public class ChordActor extends UntypedActor{
 	
 	public ChordActor() {
 		super();
-		table=new FingerTable(key);
 	}
 
+	public void createFingerTable(){
+		table=new FingerTable(this.key);
+	}
 	@Override
 	public void onReceive(Object message) throws Exception {
 		//if Research message received
@@ -50,6 +52,11 @@ public class ChordActor extends UntypedActor{
 		}
 		else if(message instanceof AfficherCleMessage) {
 			this.afficherKeys();
+		}
+		else if(message instanceof CreateFingerTableMessage) {
+			final CreateFingerTableMessage createTable = (CreateFingerTableMessage) message;
+			this.key=createTable.getKey();
+			this.createFingerTable() ;
 		}
 		else{
 			unhandled(message);
