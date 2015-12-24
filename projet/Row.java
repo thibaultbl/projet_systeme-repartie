@@ -8,6 +8,7 @@ public class Row  {
 	private int lowBound;
 	private int highBound;
 	private ActorRef successor;
+	private int idSuccessor;
 	private int idNoeud;
 	private int ordreLigne;
 	
@@ -24,15 +25,24 @@ public class Row  {
 		this.successor=this.determineSuccessor();
 	}
 	
+	public boolean inRange(int id){
+		if(this.lowBound<this.highBound){
+			if((id>=this.lowBound)&&(id<=this.highBound)){
+				return true;
+			}
+		}
+		else{
+			if((id<=this.lowBound)&&(id>=this.highBound)){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	//function to determine the successor of the interval
 	public ActorRef determineSuccessor(){
 		//TODO
-		
-		
-		
-		
-		
-		
 		
 		/*boolean trouve=false;
 		ActorRef resultat;
@@ -92,7 +102,19 @@ public class Row  {
 	}
 	
 	public String toString(){
-		return "lowBound :"+lowBound+" highBound : "+highBound+" idNoeud : "+idNoeud+" ordreLigne : "+ordreLigne;
+		return "lowBound :"+lowBound+" highBound : "+highBound+" idNoeud : "+idNoeud+" ordreLigne : "+ordreLigne+" sucesseur : "+successor+" idSuccesseur "+idSuccessor;
 	}
+
+	public int getIdSuccessor() {
+		return idSuccessor;
+	}
+
+	public void setIdSuccessor(int idSuccessor) {
+		this.idSuccessor = idSuccessor;
+	}
+	
+	
+	
+	
 	
 }

@@ -3,10 +3,15 @@ package projet;
 import java.util.TreeMap;
 
 public class FingerTable  {
-	TreeMap tree;
-	
+	public static int NROW=3;
+	TreeMap<Integer, Row> tree;
+
+	public FingerTable() {
+		super();
+	}
+
 	public FingerTable(Key key){
-		tree=new TreeMap();
+		tree=new TreeMap<Integer, Row>();
 		for(int i=0;i<3;i++){
 			this.tableEntry(key.getValue(), i);
 		}
@@ -17,7 +22,7 @@ public class FingerTable  {
 		tree.put(ordreLigne, r);
 	}
 
-	public TreeMap getTree() {
+	public TreeMap<Integer, Row> getTree() {
 		return tree;
 	}
 
@@ -31,6 +36,6 @@ public class FingerTable  {
 			System.out.println(tree.get(i).toString());
 		}
 	}
-
+	
 	
 }

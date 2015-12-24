@@ -3,12 +3,14 @@ package projet;
 import java.util.ArrayList;
 import java.util.List;
 
+import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 
 public class ChordActor extends UntypedActor{
-	Key key;
-	List<Key> othersKeys=new ArrayList<Key>();
-	FingerTable table;
+	private Key key;
+	private List<Key> othersKeys=new ArrayList<Key>();
+	private FingerTable table;
+	private ActorRef predecessor;
 	
 	public ChordActor() {
 		super();
@@ -17,6 +19,7 @@ public class ChordActor extends UntypedActor{
 	public void createFingerTable(){
 		table=new FingerTable(this.key);
 	}
+	
 	@Override
 	public void onReceive(Object message) throws Exception {
 		//if Research message received
@@ -43,7 +46,6 @@ public class ChordActor extends UntypedActor{
 		else if(message instanceof SetKeyMessage) {
 			final SetKeyMessage setKey = (SetKeyMessage) message;
 			this.key=setKey.getKey();
-			table=new FingerTable(key);
 		}
 		else if(message instanceof AddOthersKeysMessage) {
 			final AddOthersKeysMessage addOthersKeys = (AddOthersKeysMessage) message;
@@ -53,15 +55,63 @@ public class ChordActor extends UntypedActor{
 		else if(message instanceof AfficherCleMessage) {
 			this.afficherKeys();
 		}
-		else if(message instanceof CreateFingerTableMessage) {
-			final CreateFingerTableMessage createTable = (CreateFingerTableMessage) message;
-			this.key=createTable.getKey();
-			this.createFingerTable() ;
+		else if(message instanceof JoinMessage) {
+			final JoinMessage join = (JoinMessage) message;
+			//L'acteur récupére la FingerTable du collégue qu'il connait dans le cercle
+			JoinReplyMessage joinReply=new JoinReplyMessage(this.table);
+			this.getSender().tell(joinReply, this.self());
+		}
+		else if(message instanceof JoinReplyMessage) {
+			final JoinReplyMessage joinReply = (JoinReplyMessage) message;
+			//L'acteur récupére la FingerTable du collégue qu'il connait dans le cercle
+			this.table=new FingerTable();
+			this.predecessor=this.getSender();
+			this.table=joinReply.getFingerTable();
+			this.updateFingerTable(this.key.getValue());
+		}
+		else if(message instanceof InitialisationMessage) {
+			final InitialisationMessage initialisationMessage = (InitialisationMessage) message;
+			this.predecessor=this.getSelf();
+			this.table=initialisationMessage.getTable();
 		}
 		else{
 			unhandled(message);
 		}
 	}
+	
+	public void updateFingerTable(int idNoeud){
+		//Pour le premier interval
+		Row r0 =new Row(idNoeud ,	 0);
+	}
+	
+	/**
+	 * To Modify
+	 * Doit renvoyer un actorRef
+	 * @param id
+	 * @return
+	 */
+	
+	public ActorRef closestPrecedingFinger(int id){
+		//Pour le premier interval
+		for(int i=(FingerTable.NROW-1);i>=0;i++){
+			if(this.table.getTree().get(i).inRange(id))
+			{
+				if(this.table.getTree().get(i).getIdSuccessor()>id){
+					 return this.getTable().getTree().get(i).getSuccessor();
+				}
+				else{
+					if(i==0){
+						 return this.getTable().getTree().get(FingerTable.NROW).getSuccessor();
+					}
+					else{
+						 return this.getTable().getTree().get(i-1).getSuccessor();
+					}
+				}			
+			}
+		} 
+		return null;
+	}
+
 
 	public Key getKey() {
 		return key;
@@ -83,6 +133,24 @@ public class ChordActor extends UntypedActor{
 			System.out.println(othersKeys.get(i));
 		}
 	}
+
+	public List<Key> getOthersKeys() {
+		return othersKeys;
+	}
+
+	public void setOthersKeys(List<Key> othersKeys) {
+		this.othersKeys = othersKeys;
+	}
+
+	public FingerTable getTable() {
+		return table;
+	}
+
+	public void setTable(FingerTable table) {
+		this.table = table;
+	}
+	
+
 	
 	/*public void join(ChordNode c){
 		// ChordMessage comsg = new ChordMessage(...);
@@ -96,4 +164,6 @@ public class ChordActor extends UntypedActor{
 		else{
 		ligne.getReferent(').getref().forward(msg);
 */
+	
+	
 }

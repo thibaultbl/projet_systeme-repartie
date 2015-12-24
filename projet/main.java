@@ -26,29 +26,36 @@ public class main {
 		ChordNode cn7=new ChordNode();
 		
 		/**
-		 * Test avec 3 => Actor en 0 (clé : 6), 1 (clé : 1) et 3 (clé : 2)
+		 * Test : on a un acteur en 0
 		 */
+		
 		final ActorSystem system = ActorSystem.create("globalSystem");
 		final ActorRef actor0 = system.actorOf(Props.create(ChordActor.class),"ChordActor0");
-		final ActorRef actor1 = system.actorOf(Props.create(ChordActor.class),"ChordActor1");
-		final ActorRef actor3 = system.actorOf(Props.create(ChordActor.class),"ChordActor3");
-		Key key0 = new Key(0);
-		Key key1 = new Key(1);
-		Key key3 = new Key(3);
-		CreateFingerTableMessage setKey0=new CreateFingerTableMessage(key0);
-		CreateFingerTableMessage setKey1=new CreateFingerTableMessage(key1);
-		CreateFingerTableMessage setKey3=new CreateFingerTableMessage(key3);
-		actor0.tell(setKey0, null);
-		actor1.tell(setKey1, null);
-		actor3.tell(setKey3, null);
-		
-		
-		RechercheMessage recherche=new RechercheMessage(1);
-		actor1.tell(recherche, actor0);
+		InitialisationMessage initMessage=new InitialisationMessage(actor0);
+		actor0.tell(initMessage, actor0);
+		TestFingerTable table=new TestFingerTable();
+		actor0.tell(table, actor0);
+
 		
 		/**
-		 * On ajoute l'ensemble des clés au successeur correspondant
+		 * On fait rentrer un nouvel acteur en 3
 		 */
+		final ActorRef actor3 = system.actorOf(Props.create(ChordActor.class),"ChordActor3");
+		Key key3 = new Key(3);
+		SetKeyMessage setKey3=new SetKeyMessage(key3);
+		actor3.tell(setKey3, actor3);
+		JoinMessage join=new JoinMessage();
+		actor0.tell(join, actor3);	
+		//actor3.tell(table, actor3);	
+		
+		
+	
+		
+/*
+		
+		*//**
+		 * On ajoute l'ensemble des clés au successeur correspondant
+		 *//*
 		//Pour l'acteur 3
 		List<Key> liste=new ArrayList<Key>();
 		Key key2 = new Key(2);
@@ -56,7 +63,9 @@ public class main {
 		AddOthersKeysMessage addOthers=new AddOthersKeysMessage(liste);
 		actor3.tell(addOthers, null);
 		AfficherCleMessage afficher=new AfficherCleMessage();
-		actor3.tell(afficher, null);
+		//actor3.tell(afficher, null);
+		TestFingerTable testFingerTable=new TestFingerTable();
+		actor3.tell(testFingerTable, null);
 		
 		//pour l'acteur 0
 		List<Key> liste2=new ArrayList<Key>();
@@ -66,10 +75,7 @@ public class main {
 		}
 		AddOthersKeysMessage addOthers2=new AddOthersKeysMessage(liste2);
 		actor0.tell(addOthers2, null);
-		actor0.tell(afficher, null);
-		
-		
-		
+		//actor0.tell(afficher, null);	*/
 	}
 
 }
