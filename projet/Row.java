@@ -23,16 +23,9 @@ public class Row  {
 		this.idNoeud = idNoeud;
 		this.ordreLigne = ordreLigne;
 		this.calculInterval();
-		this.successor=this.determineSuccessor(null);
 	}
 	
-	public Row(int idNoeud,	int ordreLigne, HashMap<ActorRef, Integer> actor) {
-		super();
-		this.idNoeud = idNoeud;
-		this.ordreLigne = ordreLigne;
-		this.calculInterval();
-		this.successor=this.determineSuccessor(actor);
-	}
+
 	
 	public boolean inRange(int id){
 		if(this.lowBound<this.highBound){
@@ -41,30 +34,14 @@ public class Row  {
 			}
 		}
 		else{
-			if((id<=this.lowBound)&&(id>=this.highBound)){
+			if(((id>=this.lowBound)&&(id<=(Hashtable.nbNodes-1)))||((id<=this.highBound)&&(id>=0))){
 				return true;
 			}
 		}
 		
 		return false;
 	}
-	
-	//function to determine the successor of the interval
-	public ActorRef determineSuccessor(HashMap<ActorRef, Integer> actor){
-		//TODO
-		/*boolean trouve=false;
-		ActorRef resultat;
-		int index=this.lowBound;
-		//on parcourt les clés dans l'ordre à partir de l'idnoeud de la row jusqu'à trouver une clé
-		while(trouve==false){
-			//si on trouve une clé, trouve=true
-			
-			
-		}
-		//retourner l'actorref*/
-		return null;
-	}
-	
+
 
 	public int getLowBound() {
 		return lowBound;

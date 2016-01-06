@@ -7,15 +7,11 @@ public class ChordNode implements KeyRoutable{
 	private ActorRef actor;
 	private Key key;
 	
-	public ChordNode(ActorRef actor){
+	public ChordNode(ActorRef actor, Key key){
 		this.actor=actor;
-		GetKeyMessage getKey=new GetKeyMessage();
+		this.key=key;
 	}
 	
-	public ChordNode(){
-
-
-	}
 	
 	public ActorRef getRef(){
 		return actor;

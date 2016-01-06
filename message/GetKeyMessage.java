@@ -2,6 +2,9 @@ package message;
 
 import projet.Key;
 
-public class GetKeyMessage {
-	Key key;
+public class GetKeyMessage extends Message {
+	
+	public GetKeyMessage(Key key) {
+		super(key);
+	}
 }

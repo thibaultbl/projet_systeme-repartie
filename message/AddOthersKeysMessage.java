@@ -5,12 +5,12 @@ import java.util.List;
 
 import projet.Key;
 
-public class AddOthersKeysMessage {
+public class AddOthersKeysMessage extends Message {
 
 	List<Key> oKeys=new ArrayList<Key>();
 
-	public AddOthersKeysMessage(List<Key> oKeys) {
-		super();
+	public AddOthersKeysMessage(List<Key> oKeys, Key key) {
+		super(key);
 		this.oKeys = oKeys;
 	}
 

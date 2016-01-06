@@ -1,12 +1,13 @@
 package message;
 
 import projet.FingerTable;
+import projet.Key;
 
-public class JoinReplyMessage {
+public class JoinReplyMessage extends Message {
 	FingerTable fingerTable;
 
-	public JoinReplyMessage(FingerTable fingerTable) {
-		super();
+	public JoinReplyMessage(FingerTable fingerTable, Key key) {
+		super(key);
 		this.fingerTable = fingerTable;
 	}
 

@@ -1,11 +1,13 @@
 package message;
 
+import projet.Key;
 
-public class RechercheMessage {
+
+public class RechercheMessage extends Message {
 	int cleRecherche;
 
-	public RechercheMessage(int cleRecherche) {
-		super();
+	public RechercheMessage(int cleRecherche, Key key) {
+		super(key);
 		this.cleRecherche = cleRecherche;
 	}
 

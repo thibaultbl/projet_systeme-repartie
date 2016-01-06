@@ -2,11 +2,10 @@ package message;
 
 import projet.Key;
 
-public class SetKeyMessage {
+public class SetKeyMessage{
 	private Key key;
 
 	public SetKeyMessage(Key key) {
-		super();
 		this.key = key;
 	}
 

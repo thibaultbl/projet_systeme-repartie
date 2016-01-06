@@ -21,14 +21,7 @@ public class main {
 		/**
 		 * Initialisation
 		 */
-		ChordNode cn0=new ChordNode();
-		ChordNode cn1=new ChordNode();
-		ChordNode cn2=new ChordNode();
-		ChordNode cn3=new ChordNode();
-		ChordNode cn4=new ChordNode();
-		ChordNode cn5=new ChordNode();
-		ChordNode cn6=new ChordNode();
-		ChordNode cn7=new ChordNode();
+		
 		
 		/**
 		 * Test : on a un acteur en 0
@@ -38,6 +31,8 @@ public class main {
 		final ActorRef actor0 = system.actorOf(Props.create(ChordActor.class),"ChordActor0");
 		InitialisationMessage initMessage=new InitialisationMessage(actor0);
 		actor0.tell(initMessage, actor0);
+		ChordNode cn0=new ChordNode(actor0, new Key(0));
+		
 		TestFingerTable table=new TestFingerTable();
 		actor0.tell(table, actor0);
 
@@ -51,8 +46,9 @@ public class main {
 		actor3.tell(initMessage, actor3);
 		Key key3 = new Key(3);
 		SetKeyMessage setKey3=new SetKeyMessage(key3);
+		ChordNode cn3=new ChordNode(actor3, key3);
 		actor3.tell(setKey3, actor3);
-		JoinMessage join=new JoinMessage();
+		JoinMessage join=new JoinMessage(key3);
 		actor0.tell(join, actor3);	
 		actor3.tell(table, actor3);	
 		

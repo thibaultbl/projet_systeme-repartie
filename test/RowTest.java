@@ -17,7 +17,26 @@ public class RowTest {
 		final ActorSystem system = ActorSystem.create("globalSystem");
 		final ActorRef actor = system.actorOf(Props.create(PingActor.class),"test");
 		Row r=new Row(1,	1);
-		assertEquals(2,r.getLowBound() );
-		assertEquals(3,r.getHighBound() );
+		assertEquals(3,r.getLowBound() );
+		assertEquals(5,r.getHighBound() );
+	}
+	
+	@Test
+	public void inRangeTest() {
+		final ActorSystem system = ActorSystem.create("globalSystem");
+		final ActorRef actor = system.actorOf(Props.create(PingActor.class),"test");
+		Row r=new Row(1,	1);
+		assertEquals(false,r.inRange(2) );
+		assertEquals(true,r.inRange(3) );
+		assertEquals(true,r.inRange(5) );
+		r=new Row(3,	2);
+		assertEquals(false,r.inRange(6) );
+		assertEquals(false,r.inRange(4) );
+		assertEquals(true,r.inRange(3) );
+		assertEquals(true,r.inRange(7) );
+		assertEquals(true,r.inRange(0) );
+		assertEquals(true,r.inRange(2) );
+
+		//assertEquals(3,r.getHighBound() );
 	}
 }

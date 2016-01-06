@@ -6,14 +6,16 @@ import java.util.List;
 
 import message.AddOthersKeysMessage;
 import message.AfficherCleMessage;
+import message.GetKeyMessage;
+import message.GetKeyMessageReply;
 import message.InitialisationMessage;
 import message.JoinMessage;
 import message.JoinReplyMessage;
+import message.Message;
 import message.RechercheMessage;
 import message.SetKeyMessage;
 import message.TestFingerTable;
 import message.TrouveMessage;
-
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 
@@ -33,6 +35,10 @@ public class ChordActor extends UntypedActor{
 	
 	@Override
 	public void onReceive(Object message) throws Exception {
+		if(message instanceof Message){
+			this.updateOnReceive(message);
+		}
+		
 		//if Research message received
 		if (message instanceof RechercheMessage) {
 			final RechercheMessage rechercheMessage = (RechercheMessage) message;
@@ -69,26 +75,69 @@ public class ChordActor extends UntypedActor{
 		else if(message instanceof JoinMessage) {
 			final JoinMessage join = (JoinMessage) message;
 			//L'acteur récupére la FingerTable du collégue qu'il connait dans le cercle
-			JoinReplyMessage joinReply=new JoinReplyMessage(this.table);
+			JoinReplyMessage joinReply=new JoinReplyMessage(this.table, this.key);
 			this.getSender().tell(joinReply, this.self());
 		}
 		else if(message instanceof JoinReplyMessage) {
 			final JoinReplyMessage joinReply = (JoinReplyMessage) message;
 			//L'acteur récupére la FingerTable du collégue qu'il connait dans le cercle
-			this.table=new FingerTable();
+			this.table=new FingerTable(key);
 			this.predecessor=this.getSender();
-			this.table=joinReply.getFingerTable();
 			System.out.println("key :"+this.key.getValue());
 			this.updateFingerTable(this.key.getValue());
 		}
 		else if(message instanceof InitialisationMessage) {
 			final InitialisationMessage initialisationMessage = (InitialisationMessage) message;
 			this.predecessor=this.getSelf();
+			this.table=new FingerTable();
 			this.table=initialisationMessage.getTable();
+		}
+		else if(message instanceof GetKeyMessage) {
+			GetKeyMessageReply getKeyMessageReply=new GetKeyMessageReply(this.key);
+			this.sender().tell(getKeyMessageReply, this.self());
+			
 		}
 		else{
 			unhandled(message);
 		}
+	}
+	
+	public void updateOnReceive(Object message){
+		for(int i=0;i<this.table.getTree().size();i++){
+			Message messageTemp=(Message) message;
+			
+			if(this.table.getTree().get(i).getLowBound()<this.table.getTree().get(i).getHighBound()){
+				int distInitial=Math.abs(this.table.getTree().get(i).getIdSuccessor()-this.table.getTree().get(i).getLowBound());
+				int distNew=Math.abs(messageTemp.getKey().getValue()-this.table.getTree().get(i).getLowBound());
+				
+				if(distInitial>distNew){
+					System.out.println("test1");
+					this.table.getTree().get(i).setIdSuccessor(messageTemp.getKey().getValue());
+					this.table.getTree().get(i).setSuccessor(this.sender());
+				}
+			}
+			else{
+				if((messageTemp.getKey().getValue()>this.table.getTree().get(i).getLowBound())&&(this.table.getTree().get(i).getIdSuccessor()>this.table.getTree().get(i).getLowBound())){
+					int distInitial=this.table.getTree().get(i).getIdSuccessor()-this.table.getTree().get(i).getLowBound();
+					int distNew=messageTemp.getKey().getValue()-this.table.getTree().get(i).getLowBound();
+					if(distInitial>distNew){
+						System.out.println("test2");
+						this.table.getTree().get(i).setIdSuccessor(messageTemp.getKey().getValue());
+						this.table.getTree().get(i).setSuccessor(this.sender());
+					}
+				}
+				else if((messageTemp.getKey().getValue()<this.table.getTree().get(i).getLowBound())&&(this.table.getTree().get(i).getIdSuccessor()<this.table.getTree().get(i).getLowBound())){
+					int distInitial=Math.abs(this.table.getTree().get(i).getIdSuccessor()-this.table.getTree().get(i).getLowBound());
+					int distNew=Math.abs(messageTemp.getKey().getValue()-this.table.getTree().get(i).getLowBound());
+					if(distInitial<distNew){
+						System.out.println("test3");
+						this.table.getTree().get(i).setIdSuccessor(messageTemp.getKey().getValue());
+						this.table.getTree().get(i).setSuccessor(this.sender());
+					}
+				}
+			}
+		}
+		
 	}
 	
 	public void updateFingerTable(int idNoeud){
@@ -98,10 +147,11 @@ public class ChordActor extends UntypedActor{
 			actor.put(this.table.getTree().get(i).getSuccessor(), this.table.getTree().get(i).getIdSuccessor());
 		}
 		
-		//Pour le premier interval
-		Row r0 =new Row(idNoeud ,	 0, actor);
-		Row r1 =new Row(idNoeud ,	 1, actor);
-		Row r2 =new Row(idNoeud ,	 2, actor);
+	
+		//on update le sucesseur de chaque ligne de la finger table
+		
+		
+		
 	}
 	
 	/**
@@ -113,17 +163,22 @@ public class ChordActor extends UntypedActor{
 	
 	public ActorRef closestPrecedingFinger(int id){
 		//Pour le premier interval
-		for(int i=(FingerTable.NROW-1);i>=0;i++){
+		for(int i=(FingerTable.NROW-1);i>=0;i--){
+			System.out.println(i);
 			if(this.table.getTree().get(i).inRange(id))
 			{
+				System.out.println("in range");
 				if(this.table.getTree().get(i).getIdSuccessor()>id){
+					 System.out.println("id successeur : "+this.getTable().getTree().get(i).getIdSuccessor());
 					 return this.getTable().getTree().get(i).getSuccessor();
 				}
 				else{
 					if(i==0){
+						 System.out.println("id successeur : "+this.getTable().getTree().get(FingerTable.NROW).getIdSuccessor());
 						 return this.getTable().getTree().get(FingerTable.NROW).getSuccessor();
 					}
 					else{
+						 System.out.println("id successeur : "+this.getTable().getTree().get(i-1).getIdSuccessor());
 						 return this.getTable().getTree().get(i-1).getSuccessor();
 					}
 				}			

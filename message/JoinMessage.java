@@ -1,11 +1,11 @@
 package message;
 
-import akka.actor.ActorRef;
+import projet.Key;
 
-public class JoinMessage {
+public class JoinMessage extends Message {
 
-	public JoinMessage() {
-		super();
+	public JoinMessage(Key key) {
+		super(key);
 	}
 
 
