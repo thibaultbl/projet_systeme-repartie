@@ -1,6 +1,7 @@
 package projet;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import akka.actor.ActorRef;
 
@@ -22,7 +23,15 @@ public class Row  {
 		this.idNoeud = idNoeud;
 		this.ordreLigne = ordreLigne;
 		this.calculInterval();
-		this.successor=this.determineSuccessor();
+		this.successor=this.determineSuccessor(null);
+	}
+	
+	public Row(int idNoeud,	int ordreLigne, HashMap<ActorRef, Integer> actor) {
+		super();
+		this.idNoeud = idNoeud;
+		this.ordreLigne = ordreLigne;
+		this.calculInterval();
+		this.successor=this.determineSuccessor(actor);
 	}
 	
 	public boolean inRange(int id){
@@ -41,9 +50,8 @@ public class Row  {
 	}
 	
 	//function to determine the successor of the interval
-	public ActorRef determineSuccessor(){
+	public ActorRef determineSuccessor(HashMap<ActorRef, Integer> actor){
 		//TODO
-		
 		/*boolean trouve=false;
 		ActorRef resultat;
 		int index=this.lowBound;
@@ -56,6 +64,7 @@ public class Row  {
 		//retourner l'actorref*/
 		return null;
 	}
+	
 
 	public int getLowBound() {
 		return lowBound;

@@ -1,7 +1,18 @@
 package projet;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import message.AddOthersKeysMessage;
+import message.AfficherCleMessage;
+import message.InitialisationMessage;
+import message.JoinMessage;
+import message.JoinReplyMessage;
+import message.RechercheMessage;
+import message.SetKeyMessage;
+import message.TestFingerTable;
+import message.TrouveMessage;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
@@ -67,6 +78,7 @@ public class ChordActor extends UntypedActor{
 			this.table=new FingerTable();
 			this.predecessor=this.getSender();
 			this.table=joinReply.getFingerTable();
+			System.out.println("key :"+this.key.getValue());
 			this.updateFingerTable(this.key.getValue());
 		}
 		else if(message instanceof InitialisationMessage) {
@@ -80,8 +92,16 @@ public class ChordActor extends UntypedActor{
 	}
 	
 	public void updateFingerTable(int idNoeud){
+		//on récupére l liste d'actorRef de la finger Table
+		HashMap<ActorRef, Integer> actor=new HashMap<ActorRef, Integer>();
+		for(int i=0;i<this.table.getTree().size();i++){
+			actor.put(this.table.getTree().get(i).getSuccessor(), this.table.getTree().get(i).getIdSuccessor());
+		}
+		
 		//Pour le premier interval
-		Row r0 =new Row(idNoeud ,	 0);
+		Row r0 =new Row(idNoeud ,	 0, actor);
+		Row r1 =new Row(idNoeud ,	 1, actor);
+		Row r2 =new Row(idNoeud ,	 2, actor);
 	}
 	
 	/**

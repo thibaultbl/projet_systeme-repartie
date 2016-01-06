@@ -1,4 +1,6 @@
-package projet;
+package message;
+
+import projet.Key;
 
 public class SetKeyMessage {
 	private Key key;

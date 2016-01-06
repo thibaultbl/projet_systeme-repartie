@@ -1,4 +1,4 @@
-package projet;
+package message;
 
 public class TestFingerTable {
 

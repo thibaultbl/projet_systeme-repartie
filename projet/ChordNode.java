@@ -1,13 +1,20 @@
 package projet;
 
+import message.GetKeyMessage;
 import akka.actor.ActorRef;
 
 public class ChordNode implements KeyRoutable{
 	private ActorRef actor;
 	private Key key;
 	
+	public ChordNode(ActorRef actor){
+		this.actor=actor;
+		GetKeyMessage getKey=new GetKeyMessage();
+	}
+	
 	public ChordNode(){
-		
+
+
 	}
 	
 	public ActorRef getRef(){

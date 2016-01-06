@@ -1,4 +1,6 @@
-package projet;
+package message;
+
+import projet.FingerTable;
 
 public class JoinReplyMessage {
 	FingerTable fingerTable;

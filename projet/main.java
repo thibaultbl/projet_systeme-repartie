@@ -3,6 +3,11 @@ package projet;
 import java.util.ArrayList;
 import java.util.List;
 
+import message.InitialisationMessage;
+import message.JoinMessage;
+import message.SetKeyMessage;
+import message.TestFingerTable;
+
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
@@ -40,13 +45,16 @@ public class main {
 		/**
 		 * On fait rentrer un nouvel acteur en 3
 		 */
+		
 		final ActorRef actor3 = system.actorOf(Props.create(ChordActor.class),"ChordActor3");
+		initMessage=new InitialisationMessage(actor3);
+		actor3.tell(initMessage, actor3);
 		Key key3 = new Key(3);
 		SetKeyMessage setKey3=new SetKeyMessage(key3);
 		actor3.tell(setKey3, actor3);
 		JoinMessage join=new JoinMessage();
 		actor0.tell(join, actor3);	
-		//actor3.tell(table, actor3);	
+		actor3.tell(table, actor3);	
 		
 		
 	

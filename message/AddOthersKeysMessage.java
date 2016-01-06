@@ -1,7 +1,9 @@
-package projet;
+package message;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import projet.Key;
 
 public class AddOthersKeysMessage {
 

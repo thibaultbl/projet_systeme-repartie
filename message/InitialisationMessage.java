@@ -1,6 +1,10 @@
-package projet;
+package message;
 
 import java.util.TreeMap;
+
+import projet.FingerTable;
+import projet.Key;
+import projet.Row;
 
 import akka.actor.ActorRef;
 
