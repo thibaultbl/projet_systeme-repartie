@@ -1,8 +1,11 @@
 package projet;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import message.AddOthersKeysMessage;
 import message.AfficherCleMessage;
@@ -24,21 +27,22 @@ public class ChordActor extends UntypedActor{
 	private List<Key> othersKeys=new ArrayList<Key>();
 	private FingerTable table;
 	private ActorRef predecessor;
-	
+
 	public ChordActor() {
 		super();
+		this.self().tell(new InitialisationMessage(this.self()), this.self());
 	}
 
 	public void createFingerTable(){
-		table=new FingerTable(this.key);
+		table=new FingerTable(this.key, this.self(), this.key.getValue());
 	}
-	
+
 	@Override
 	public void onReceive(Object message) throws Exception {
 		if(message instanceof Message){
 			this.updateOnReceive(message);
 		}
-		
+
 		//if Research message received
 		if (message instanceof RechercheMessage) {
 			final RechercheMessage rechercheMessage = (RechercheMessage) message;
@@ -67,7 +71,7 @@ public class ChordActor extends UntypedActor{
 		else if(message instanceof AddOthersKeysMessage) {
 			final AddOthersKeysMessage addOthersKeys = (AddOthersKeysMessage) message;
 			this.addOthersKeys(addOthersKeys.getoKeys());
-			table=new FingerTable(key);
+			table=new FingerTable(key, this.self(), this.key.getValue());
 		}
 		else if(message instanceof AfficherCleMessage) {
 			this.afficherKeys();
@@ -75,117 +79,142 @@ public class ChordActor extends UntypedActor{
 		else if(message instanceof JoinMessage) {
 			final JoinMessage join = (JoinMessage) message;
 			//L'acteur récupére la FingerTable du collégue qu'il connait dans le cercle
-			JoinReplyMessage joinReply=new JoinReplyMessage(this.table, this.key);
+			System.out.println("join.getKey() -> this.key : "+this.key);
+			JoinReplyMessage joinReply=new JoinReplyMessage(this.table, this.key, join.getKey());
 			this.getSender().tell(joinReply, this.self());
 		}
 		else if(message instanceof JoinReplyMessage) {
 			final JoinReplyMessage joinReply = (JoinReplyMessage) message;
 			//L'acteur récupére la FingerTable du collégue qu'il connait dans le cercle
-			this.table=new FingerTable(key);
+			this.key=joinReply.getMyKey();
+			this.table=new FingerTable(this.key, this.self(), this.key.getValue());
+			System.out.println("affichage fingertable avant update");
+			this.table.afficher();
 			this.predecessor=this.getSender();
 			System.out.println("key :"+this.key.getValue());
-			this.updateFingerTable(this.key.getValue());
+			System.out.println("joinReply.getKey() : "+joinReply.getKey());
+			this.updateFingerTable(this.key.getValue(), joinReply.getKey(), joinReply.getFingerTable());
+			System.out.println("affichage fingertable après update");
+			this.table.afficher();
 		}
 		else if(message instanceof InitialisationMessage) {
 			final InitialisationMessage initialisationMessage = (InitialisationMessage) message;
 			this.predecessor=this.getSelf();
-			this.table=new FingerTable();
 			this.table=initialisationMessage.getTable();
+			this.key=initialisationMessage.getKey();
 		}
 		else if(message instanceof GetKeyMessage) {
 			GetKeyMessageReply getKeyMessageReply=new GetKeyMessageReply(this.key);
 			this.sender().tell(getKeyMessageReply, this.self());
-			
+
 		}
 		else{
 			unhandled(message);
 		}
 	}
-	
+
+	//on update la fingertable lorsque l'on reçoit un message d'un acteur (on ne connait pas forcément cet acteur avant de recevoir le message)
 	public void updateOnReceive(Object message){
+		Message messageTemp=(Message) message;
+
 		for(int i=0;i<this.table.getTree().size();i++){
-			Message messageTemp=(Message) message;
-			
-			if(this.table.getTree().get(i).getLowBound()<this.table.getTree().get(i).getHighBound()){
-				int distInitial=Math.abs(this.table.getTree().get(i).getIdSuccessor()-this.table.getTree().get(i).getLowBound());
-				int distNew=Math.abs(messageTemp.getKey().getValue()-this.table.getTree().get(i).getLowBound());
-				
-				if(distInitial>distNew){
-					System.out.println("test1");
-					this.table.getTree().get(i).setIdSuccessor(messageTemp.getKey().getValue());
+			int idCible=this.table.getTree().get(i).getLowBound();
+			int id1=messageTemp.getKey().getValue();
+			int id2=this.table.getTree().get(i).getIdSuccessor();
+
+			int k=idCible;
+			for(int j=0;j<Hashtable.nbNodes;j++){
+				if(j!=0){
+					k=((k+1) % (Hashtable.nbNodes));
+				}
+				if(k==id2){
+					System.out.println("keep referent last modification");
+					break;
+				}
+				else if(k==id1){
+					System.out.println("change referent");
+					this.table.getTree().get(i).setIdSuccessor(id1);
 					this.table.getTree().get(i).setSuccessor(this.sender());
+					break;
 				}
 			}
-			else{
-				if((messageTemp.getKey().getValue()>this.table.getTree().get(i).getLowBound())&&(this.table.getTree().get(i).getIdSuccessor()>this.table.getTree().get(i).getLowBound())){
-					int distInitial=this.table.getTree().get(i).getIdSuccessor()-this.table.getTree().get(i).getLowBound();
-					int distNew=messageTemp.getKey().getValue()-this.table.getTree().get(i).getLowBound();
-					if(distInitial>distNew){
-						System.out.println("test2");
-						this.table.getTree().get(i).setIdSuccessor(messageTemp.getKey().getValue());
-						this.table.getTree().get(i).setSuccessor(this.sender());
-					}
-				}
-				else if((messageTemp.getKey().getValue()<this.table.getTree().get(i).getLowBound())&&(this.table.getTree().get(i).getIdSuccessor()<this.table.getTree().get(i).getLowBound())){
-					int distInitial=Math.abs(this.table.getTree().get(i).getIdSuccessor()-this.table.getTree().get(i).getLowBound());
-					int distNew=Math.abs(messageTemp.getKey().getValue()-this.table.getTree().get(i).getLowBound());
-					if(distInitial<distNew){
-						System.out.println("test3");
-						this.table.getTree().get(i).setIdSuccessor(messageTemp.getKey().getValue());
-						this.table.getTree().get(i).setSuccessor(this.sender());
-					}
-				}
-			}
-		}
-		
+		}		
 	}
-	
-	public void updateFingerTable(int idNoeud){
+
+	public void updateFingerTable(int idNoeud, Key keySender, FingerTable fingerTableSender){
 		//on récupére l liste d'actorRef de la finger Table
-		HashMap<ActorRef, Integer> actor=new HashMap<ActorRef, Integer>();
-		for(int i=0;i<this.table.getTree().size();i++){
-			actor.put(this.table.getTree().get(i).getSuccessor(), this.table.getTree().get(i).getIdSuccessor());
+		HashMap<Integer, ActorRef> actor=new HashMap<Integer, ActorRef>();
+		for(int i=0;i<fingerTableSender.getTree().size();i++){
+			actor.put(fingerTableSender.getTree().get(i).getIdSuccessor(), fingerTableSender.getTree().get(i).getSuccessor());
 		}
-		
-	
-		//on update le sucesseur de chaque ligne de la finger table
-		
-		
-		
+
+		//on récupére le meilleur référent dans actor pour chaque ligne
+		for(int i=0;i<this.table.getTree().size();i++){
+			Collection<Object> result=bestReferent(actor, this.table.getTree().get(i), keySender);
+			Iterator<Object> iterator = result.iterator();
+			this.table.getTree().get(i).setSuccessor((ActorRef)iterator.next());
+			this.table.getTree().get(i).setIdSuccessor((Integer)iterator.next());
+		}
+
+		//On utilise les connaissances du référent pour actualiser notre table
+
 	}
-	
-	/**
-	 * To Modify
-	 * Doit renvoyer un actorRef
-	 * @param id
-	 * @return
-	 */
-	
-	public ActorRef closestPrecedingFinger(int id){
-		//Pour le premier interval
-		for(int i=(FingerTable.NROW-1);i>=0;i--){
-			System.out.println(i);
-			if(this.table.getTree().get(i).inRange(id))
-			{
-				System.out.println("in range");
-				if(this.table.getTree().get(i).getIdSuccessor()>id){
-					 System.out.println("id successeur : "+this.getTable().getTree().get(i).getIdSuccessor());
-					 return this.getTable().getTree().get(i).getSuccessor();
+
+	public Collection<Object> bestReferent(HashMap<Integer, ActorRef> actor, Row row, Key keySender){
+		Collection<Object> result=new ArrayList<Object>();
+		ActorRef referent=row.getSuccessor();
+		int id=row.getIdSuccessor();
+		Set<Integer> keys=actor.keySet();
+		Iterator i=keys.iterator(); // on crée un Iterator pour parcourir notre HashSet
+		while(i.hasNext()) // tant qu'on a un suivant
+		{
+			int idCible=row.getLowBound();
+			int id1=row.getIdSuccessor();
+			int id2=(Integer) i.next();
+			int id3=this.key.getValue();
+			int id4=keySender.getValue();
+			int k=idCible;
+			for(int j=0;j<Hashtable.nbNodes;j++){
+				if(j!=0){
+					k=((k+1) % (Hashtable.nbNodes));
 				}
-				else{
-					if(i==0){
-						 System.out.println("id successeur : "+this.getTable().getTree().get(FingerTable.NROW).getIdSuccessor());
-						 return this.getTable().getTree().get(FingerTable.NROW).getSuccessor();
-					}
-					else{
-						 System.out.println("id successeur : "+this.getTable().getTree().get(i-1).getIdSuccessor());
-						 return this.getTable().getTree().get(i-1).getSuccessor();
-					}
-				}			
+				System.out.println("id1 :"+id1);
+				System.out.println("id2 :"+id2);
+				System.out.println("id3 :"+id3);
+				System.out.println("id4 :"+id4);
+				if(k==id){
+					System.out.println("keep referent last modification");
+					break;
+				}
+				else if(k==id1){
+					System.out.println("keep referent");
+					break;
+				}
+				else if(k==id2){
+					System.out.println("change referent");
+					referent=actor.get(id2);
+					id=id2;
+					break;
+				}
+				else if(k==id3){
+					System.out.println("change referent for himself");
+					referent=this.self();
+					id=id3;
+					break;
+				}
+				else if(k==id4){
+					System.out.println("change referent for sender");
+					referent=this.sender();
+					id=id4;
+					break;
+				}
 			}
-		} 
-		return null;
+		}
+		result.add(referent);
+		result.add(id);
+		return result;
 	}
+
 
 
 	public Key getKey() {
@@ -195,13 +224,13 @@ public class ChordActor extends UntypedActor{
 	public void setKey(Key key) {
 		this.key = key;
 	}
-	
+
 	public void addOthersKeys(List<Key> oKeys) {
 		for(int i=0; i<oKeys.size();i++){
 			othersKeys.add(oKeys.get(i));
 		}
 	}
-	
+
 	public void afficherKeys(){
 		System.out.println("key propre :"+key);
 		for(int i=0; i<othersKeys.size();i++){
@@ -224,21 +253,52 @@ public class ChordActor extends UntypedActor{
 	public void setTable(FingerTable table) {
 		this.table = table;
 	}
-	
 
+
+
+	/**
+	 * Pseudo-code implementation
+	 */
+	/**
+	 * To Modify
+	 * Doit renvoyer un actorRef
+	 * @param id
+	 * @return
+	 */
+
+	public ActorRef closestPrecedingFinger(int id){
+		//Pour le premier interval
+		for(int i=(FingerTable.NROW-1);i>=0;i--){
+			System.out.println(i);
+			if(this.table.getTree().get(i).inRange(id))
+			{
+				System.out.println("in range");
+				if(this.table.getTree().get(i).getIdSuccessor()<id){
+					System.out.println("id successeur : "+this.getTable().getTree().get(i).getIdSuccessor());
+					return this.getTable().getTree().get(i).getSuccessor();
+				}
+				else{
+					if(i==0){
+						System.out.println("id successeur : "+this.getTable().getTree().get(FingerTable.NROW).getIdSuccessor());
+						return this.getTable().getTree().get(FingerTable.NROW).getSuccessor();
+					}
+					else{
+						System.out.println("id successeur : "+this.getTable().getTree().get(i-1).getIdSuccessor());
+						return this.getTable().getTree().get(i-1).getSuccessor();
+					}
+				}			
+			}
+		} 
+		return null;
+	}
 	
-	/*public void join(ChordNode c){
-		// ChordMessage comsg = new ChordMessage(...);
-		// get.Ref().tell(comsg);
-	}*/
-	
-	/*private handle:JoinMsg(ChordMessage msg){
-		ChordNode sender = msg.getSender();
-		Row ligne=this.ft.lookup(sender.getKey());if(ligne==this.ft.first(j){
-		}
-		else{
-		ligne.getReferent(').getref().forward(msg);
-*/
-	
-	
+	public ActorRef findPredecessor(int id){
+		int temp=this.key;
+		while()
+		
+		return null;
+	}
+
+
+
 }

@@ -16,7 +16,7 @@ public class RowTest {
 	public void calculIntervalTest() {
 		final ActorSystem system = ActorSystem.create("globalSystem");
 		final ActorRef actor = system.actorOf(Props.create(PingActor.class),"test");
-		Row r=new Row(1,	1);
+		Row r=new Row(1,	1, actor, 0);
 		assertEquals(3,r.getLowBound() );
 		assertEquals(5,r.getHighBound() );
 	}
@@ -25,11 +25,11 @@ public class RowTest {
 	public void inRangeTest() {
 		final ActorSystem system = ActorSystem.create("globalSystem");
 		final ActorRef actor = system.actorOf(Props.create(PingActor.class),"test");
-		Row r=new Row(1,	1);
+		Row r=new Row(1,	1, actor, 0);
 		assertEquals(false,r.inRange(2) );
 		assertEquals(true,r.inRange(3) );
 		assertEquals(true,r.inRange(5) );
-		r=new Row(3,	2);
+		r=new Row(3,	2, actor, 0);
 		assertEquals(false,r.inRange(6) );
 		assertEquals(false,r.inRange(4) );
 		assertEquals(true,r.inRange(3) );

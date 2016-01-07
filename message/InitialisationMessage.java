@@ -19,13 +19,13 @@ public class InitialisationMessage {
 	public InitialisationMessage(ActorRef actor) {
 		super();
 		TreeMap tree=new TreeMap();
-		table=new FingerTable();
 		this.key =new Key(0);
-		Row r0 =new Row(0,	 0);
+		table=new FingerTable(this.key, actor, 0);
+		Row r0 =new Row(0,	 0, actor, 0);
 		r0.setSuccessor(actor);
-		Row r1=new Row(0,	 1);
+		Row r1=new Row(0,	 1, actor, 0);
 		r1.setSuccessor(actor);
-		Row r2=new Row(0,	 2);
+		Row r2=new Row(0,	 2, actor, 0);
 		r2.setSuccessor(actor);
 		r2.setIdSuccessor(this.key.getValue());
 		tree.put(0, r0);

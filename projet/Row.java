@@ -18,11 +18,13 @@ public class Row  {
 		highBound=((((idNoeud+(int)java.lang.Math.pow(2, (ordreLigne+1))) % (int)java.lang.Math.pow(2, Hashtable.nbNodes))) % 8);
 	}
 	
-	public Row(int idNoeud,	int ordreLigne) {
+	public Row(int idNoeud,	int ordreLigne, ActorRef actor, int actorId) {
 		super();
 		this.idNoeud = idNoeud;
 		this.ordreLigne = ordreLigne;
 		this.calculInterval();
+		this.successor=actor;
+		this.idSuccessor=actorId;
 	}
 	
 
@@ -98,6 +100,8 @@ public class Row  {
 	public void setIdSuccessor(int idSuccessor) {
 		this.idSuccessor = idSuccessor;
 	}
+	
+	
 	
 	
 	
