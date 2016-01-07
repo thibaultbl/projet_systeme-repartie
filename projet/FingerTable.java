@@ -28,7 +28,6 @@ public class FingerTable  {
 	public void setTree(TreeMap tree) {
 		this.tree = tree;
 	}
-
 	
 	public void afficher(){
 		for(int i=0;i<3;i++){
@@ -36,5 +35,15 @@ public class FingerTable  {
 		}
 	}
 	
+	public void setSuccessor(int i, ActorRef actor, int idActor){
+		Row r = this.tree.get(i);
+		r.setSuccessor(actor);
+		r.setIdSuccessor(idActor);
+		this.tree.put(i, r);
+	}
+	
+	public int size(){
+		return this.tree.size();
+	}
 	
 }

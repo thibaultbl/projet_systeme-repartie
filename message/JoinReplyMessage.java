@@ -5,13 +5,13 @@ import projet.Key;
 
 public class JoinReplyMessage {
 	private FingerTable fingerTable;
-	private Key myKey;
-	private Key key;
+/*	private Key myKey;
+	private Key key;*/
 
-	public JoinReplyMessage(FingerTable fingerTable, Key key, Key myKey) {
+	public JoinReplyMessage(FingerTable fingerTable/*, Key key, Key myKey*/) {
 		this.fingerTable = fingerTable;
-		this.myKey=myKey;
-		this.key=key;
+		/*this.myKey=myKey;
+		this.key=key;*/
 	}
 
 	public FingerTable getFingerTable() {
@@ -22,13 +22,13 @@ public class JoinReplyMessage {
 		this.fingerTable = fingerTable;
 	}
 	
-	public Key getMyKey() {
+/*	public Key getMyKey() {
 		return myKey;
 	}
 	
 	public Key getKey() {
 		return key;
-	}
+	}*/
 	
 	
 }
