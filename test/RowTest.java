@@ -36,6 +36,10 @@ public class RowTest {
 		assertEquals(true,r.inRange(7) );
 		assertEquals(true,r.inRange(0) );
 		assertEquals(true,r.inRange(2) );
+		
+		r=new Row(3,	0, actor, 0);
+		assertEquals(false,r.inRange(2) );
+
 
 		//assertEquals(3,r.getHighBound() );
 	}

@@ -9,12 +9,14 @@ import java.util.Set;
 
 import message.AddOthersKeysMessage;
 import message.AfficherCleMessage;
+import message.FindPredecessorMessage;
 import message.GetKeyMessage;
 import message.GetKeyMessageReply;
 import message.InitialisationMessage;
 import message.JoinMessage;
 import message.JoinReplyMessage;
 import message.Message;
+import message.PredecessorFoundMessage;
 import message.RechercheMessage;
 import message.SetKeyMessage;
 import message.TestFingerTable;
@@ -27,6 +29,7 @@ public class ChordActor extends UntypedActor{
 	private List<Key> othersKeys=new ArrayList<Key>();
 	private FingerTable table;
 	private ActorRef predecessor;
+	private int Idpredecessor;
 
 	public ChordActor() {
 		super();
@@ -91,32 +94,70 @@ public class ChordActor extends UntypedActor{
 			System.out.println("affichage fingertable avant update");
 			this.table.afficher();
 			this.predecessor=this.getSender();
+			this.Idpredecessor=joinReply.getKey().getValue();
 			System.out.println("key :"+this.key.getValue());
 			System.out.println("joinReply.getKey() : "+joinReply.getKey());
 			this.updateFingerTable(this.key.getValue(), joinReply.getKey(), joinReply.getFingerTable());
 			System.out.println("affichage fingertable après update");
 			this.table.afficher();
+			FindPredecessorMessage findPredecessorMessage=new FindPredecessorMessage(this.key.getValue(), this.self());
+			this.sender().tell(findPredecessorMessage, this.self());
 		}
 		else if(message instanceof InitialisationMessage) {
 			final InitialisationMessage initialisationMessage = (InitialisationMessage) message;
 			this.predecessor=this.getSelf();
 			this.table=initialisationMessage.getTable();
 			this.key=initialisationMessage.getKey();
+			this.Idpredecessor=this.key.getValue();
 		}
 		else if(message instanceof GetKeyMessage) {
 			GetKeyMessageReply getKeyMessageReply=new GetKeyMessageReply(this.key);
 			this.sender().tell(getKeyMessageReply, this.self());
+		}
+		else if(message instanceof FindPredecessorMessage) {
+			System.out.println("findPredecessorRecu");
+			FindPredecessorMessage findPredecessorMessage=(FindPredecessorMessage) message;
+			System.out.println("interval :"+this.getTable().getTree().get(0));
+			System.out.println("ID : "+findPredecessorMessage.getId());
+			System.out.println("fngertable de : "+this.key.getValue());
+			this.table.afficher();
 
+			if(this.inRange(findPredecessorMessage.getId())){
+				PredecessorFoundMessage predecessorFoundMessage=new PredecessorFoundMessage(this.getTable().getTree().get(0).getSuccessor(), findPredecessorMessage.getId(), this.getKey().getValue(), this.getTable().getTree().get(0).getIdSuccessor());
+				findPredecessorMessage.getSender().tell(predecessorFoundMessage, this.self());
+			}
+			else{
+				FindPredecessorMessage newFindPredecessorMessage=new FindPredecessorMessage(findPredecessorMessage.getId(), findPredecessorMessage.getSender());
+				System.out.println("envoi findPredecessorMessage à "+this.closestPrecedingFinger(findPredecessorMessage.getId()));
+				System.out.println("fingertable de : "+this.self());
+				this.table.afficher();
+				this.closestPrecedingFinger(findPredecessorMessage.getId()).tell(newFindPredecessorMessage, this.self());
+			}
+		}
+		else if(message instanceof PredecessorFoundMessage) {
+			PredecessorFoundMessage predecessorFoundMessage= (PredecessorFoundMessage)message;
+			System.out.println("PredcessorFoundMessage : Predecessor : "+this.sender()+" sucessor : "+predecessorFoundMessage.getSucessor());
+			ActorRef idPredecessor=this.sender();
+			ActorRef idSuccessor=predecessorFoundMessage.getSucessor();
+			//si l'id recherché est le même que l'id de l'envoyeur, on update ces prédécesseur et sucesseur
+			if(predecessorFoundMessage.getIdRechercher()==this.key.getValue()){
+				this.predecessor=this.sender();
+				this.getTable().getTree().get(0).setSuccessor(predecessorFoundMessage.getSucessor());
+				this.Idpredecessor=predecessorFoundMessage.getIdSender();
+				this.getTable().getTree().get(0).setIdSuccessor(predecessorFoundMessage.getIdSucessor());
+			}
 		}
 		else{
 			unhandled(message);
 		}
+		System.out.println("prédeccesseur de "+this.self()+" est : "+this.predecessor);
+
 	}
 
 	//on update la fingertable lorsque l'on reçoit un message d'un acteur (on ne connait pas forcément cet acteur avant de recevoir le message)
 	public void updateOnReceive(Object message){
 		Message messageTemp=(Message) message;
-
+		//on update les successeurs de la finger table
 		for(int i=0;i<this.table.getTree().size();i++){
 			int idCible=this.table.getTree().get(i).getLowBound();
 			int id1=messageTemp.getKey().getValue();
@@ -139,6 +180,27 @@ public class ChordActor extends UntypedActor{
 				}
 			}
 		}		
+
+		//on update le predecesseur du noeud
+		int k=this.key.getValue();
+		int id1=messageTemp.getKey().getValue();
+		int id2=this.Idpredecessor;
+
+		for(int j=0;j<Hashtable.nbNodes;j++){
+			if(j!=0){
+				k=((k+1) % (Hashtable.nbNodes));
+			}
+			if(k==id2){
+				System.out.println("change predecessor");
+				this.predecessor=this.sender();
+				this.Idpredecessor=id1;
+				break;
+			}
+			else if(k==id1){
+				System.out.println("keep predecessor");
+				break;
+			}
+		}
 	}
 
 	public void updateFingerTable(int idNoeud, Key keySender, FingerTable fingerTableSender){
@@ -178,10 +240,7 @@ public class ChordActor extends UntypedActor{
 				if(j!=0){
 					k=((k+1) % (Hashtable.nbNodes));
 				}
-				System.out.println("id1 :"+id1);
-				System.out.println("id2 :"+id2);
-				System.out.println("id3 :"+id3);
-				System.out.println("id4 :"+id4);
+
 				if(k==id){
 					System.out.println("keep referent last modification");
 					break;
@@ -269,34 +328,33 @@ public class ChordActor extends UntypedActor{
 	public ActorRef closestPrecedingFinger(int id){
 		//Pour le premier interval
 		for(int i=(FingerTable.NROW-1);i>=0;i--){
-			System.out.println(i);
 			if(this.table.getTree().get(i).inRange(id))
 			{
-				System.out.println("in range");
-				if(this.table.getTree().get(i).getIdSuccessor()<id){
-					System.out.println("id successeur : "+this.getTable().getTree().get(i).getIdSuccessor());
-					return this.getTable().getTree().get(i).getSuccessor();
-				}
-				else{
 					if(i==0){
-						System.out.println("id successeur : "+this.getTable().getTree().get(FingerTable.NROW).getIdSuccessor());
-						return this.getTable().getTree().get(FingerTable.NROW).getSuccessor();
+						return this.getTable().getTree().get(FingerTable.NROW-1).getSuccessor();
 					}
 					else{
-						System.out.println("id successeur : "+this.getTable().getTree().get(i-1).getIdSuccessor());
 						return this.getTable().getTree().get(i-1).getSuccessor();
 					}
 				}			
 			}
-		} 
 		return null;
 	}
-	
-	public ActorRef findPredecessor(int id){
-		int temp=this.key;
-		while()
-		
-		return null;
+
+	public boolean inRange(int id){
+		int k=this.key.getValue();
+		for(int j=0;j<Hashtable.nbNodes;j++){
+			k=((k+1) % (Hashtable.nbNodes));
+			if(id==k){
+				System.out.println("id : "+id+" est dans l'intervalle :"+this.key.getValue()+" -> "+this.getTable().getTree().get(0).getIdSuccessor());
+				return true;
+			}
+			else if(k==this.getTable().getTree().get(0).getIdSuccessor()){
+				System.out.println("id : "+id+" n'est PAS dans l'intervalle :"+this.key.getValue()+" -> "+this.getTable().getTree().get(0).getIdSuccessor());
+				return false;
+			}
+		}
+		return false;
 	}
 
 
