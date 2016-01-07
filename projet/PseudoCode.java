@@ -5,6 +5,8 @@ import java.util.List;
 
 import message.JoinMessage;
 import message.JoinReplyMessage;
+import message.LookupMessage;
+import message.LookupReplyMessage;
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 
@@ -47,6 +49,64 @@ public class PseudoCode extends UntypedActor{
 				// on initialise la fingerTable du noeud qui cherche à rentrer
 				FingerTable fingerTable = this.init_finger_table(((JoinMessage) message),((JoinMessage) message).getKey().getValue());
 				getSender().tell(new JoinReplyMessage(fingerTable), getSelf());
+			}
+		}
+		if(message instanceof JoinReplyMessage) {
+			// on récupère la fingerTable créee par l'autre noeud
+			this.table=((JoinReplyMessage) message).getFingerTable();
+
+			// on va chercher à améliorer les successeurs de la fingerTable en les contactant
+			// on parcourt chaque successeur de la fingerTable
+			for(int i=0;i<this.table.size();i++){
+				// on recherche à chaque fois le meilleur successeur à contacter
+				int dif1=difference(this.table.tree.get(i).getIdSuccessor(),this.table.getTree().get(i).getLowBound());
+				int difMin=dif1;
+				int indexMin=0;
+				for(int j=0;j<this.table.size();j++){
+					int dif2=difference(this.table.tree.get(j).getIdSuccessor(),this.table.getTree().get(i).getLowBound());
+					if(dif2<difMin){
+						indexMin=j;
+						difMin=dif2;
+					}
+				}
+				// contacter le meilleur successeur
+				if(difMin<dif1){
+					this.table.tree.get(indexMin).getSuccessor().tell(new LookupMessage(this.table.tree.get(i).getLowBound(),difMin,i,this.key.getValue()), getSelf());
+				}
+				else{
+					this.table.tree.get(i).getSuccessor().tell(new LookupMessage(this.table.tree.get(i).getLowBound(),difMin,i,this.key.getValue()), getSelf());
+				}
+			}
+		}
+
+		if(message instanceof LookupMessage) {
+			// on met à jour la fingerTable du noeud
+			for(int i=0;i<this.table.size();i++){
+				int dif0=difference(this.table.tree.get(i).getIdSuccessor(),this.table.tree.get(i).getLowBound());
+				int dif2=difference(((LookupMessage) message).getIdActor(),this.table.tree.get(i).getLowBound());
+				if(dif2<dif0){
+					this.table.setSuccessor(i, getSender(), ((JoinMessage) message).getKey().getValue());
+				}
+			}
+
+			// on parcourt chaque successeur de la fingerTable
+			int dif1=((LookupMessage) message).getDif();
+			int difMin=dif1;
+			int indexMin=0;
+			for(int i=0;i<this.table.size();i++){
+				int dif2=difference(this.table.tree.get(i).getIdSuccessor(),((LookupMessage) message).getIdRecherche());
+				if(dif2<difMin){
+					indexMin=i;
+					difMin=dif2;
+				}
+			}
+			if(difMin<dif1){
+				// si on a trouvé un meilleur successeur on refile le lookupMessage
+				this.table.tree.get(indexMin).getSuccessor().tell(new LookupMessage(((LookupMessage) message).getIdRecherche(),difMin,((LookupMessage) message).getLigneMAJ(),((LookupMessage) message).getIdActor()), getSender());
+			}
+			else{
+				// sinon on se renvoie soi-même
+				getSender().tell(new LookupReplyMessage(((LookupMessage) message).getLigneMAJ()), getSelf());
 			}
 		}
 	}
